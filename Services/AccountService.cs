@@ -26,7 +26,7 @@ namespace MorningIntegration.Services
         private readonly DataContext _context;
         private IHttpClientFactory _httpClientFactory;
         private readonly ILogger<AccountService> _logger;
-      
+
 
         public AccountService(UserManager<IdentityUser> userManager, IConfiguration config, DataContext context, IHttpClientFactory httpClientFactory, ILogger<AccountService> logger)
         {
@@ -35,30 +35,20 @@ namespace MorningIntegration.Services
             _context = context;
             _httpClientFactory = httpClientFactory;
             _logger = logger;
-          
         }
 
-
-
-        public async Task<String> GetToken()
+        public async Task<String> GetToken(string id, string secret)
         {
             HttpClient client = _httpClientFactory.CreateClient();
-          
+
             var values = new Dictionary<string, string>
         {
-           { "id", "044577f7-6513-44ff-9537-7df4d77310c2" },
-           { "secret", "eO5q9QcbDwOij73XN2z-3w" }
+           { "id", id },
+           { "secret", secret }
         };
             var json = JsonSerializer.Serialize(values);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            //var content = new FormUrlEncodedContent(values);
-            _logger.LogInformation("Sending request to Green Invoice API.");
-            //var response = await client.PostAsync("https://sandbox.d.greeninvoice.co.il/api/v1/account/token", content);
-
-            //response.EnsureSuccessStatusCode();
-            //var result = await response.Content.ReadAsStringAsync();
-            //return result;          
-
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");          
+            _logger.LogInformation("Sending request to Green Invoice API.");    
             try
             {
                 var response = await client.PostAsync("https://sandbox.d.greeninvoice.co.il/api/v1/account/token", content);
@@ -72,8 +62,9 @@ namespace MorningIntegration.Services
 
                 var result = await response.Content.ReadAsStringAsync();
                 _logger.LogInformation("Received response from Green Invoice API.");
-              
-                return result;
+
+                var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(result);  
+                return tokenResponse.token;
             }
             catch (HttpRequestException e)
             {
@@ -81,7 +72,16 @@ namespace MorningIntegration.Services
                 throw;
             }
         }
-    
+
+        public class TokenResponse
+        {
+            public string token { get; set; }
+            public int expires { get; set; }
+        }
+
+
+
+
 
 
         //private List<LoginUser> _users = new List<LoginUser>
@@ -123,7 +123,7 @@ namespace MorningIntegration.Services
         //    //return user.Token;
         //    return tokenHandler.WriteToken(token);
         //}
-      
+
 
 
     }

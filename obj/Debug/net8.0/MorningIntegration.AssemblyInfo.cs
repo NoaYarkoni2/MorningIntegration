@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MorningIntegration")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3bfbea6e79c5c8d68466d15f5746dd1d9b09bc90")]
 [assembly: System.Reflection.AssemblyProductAttribute("MorningIntegration")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MorningIntegration")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

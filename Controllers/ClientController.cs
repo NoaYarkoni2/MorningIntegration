@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MorningIntegration.Interface;
 using MorningIntegration.Models;
 using MorningIntegration.Services;
+using static MorningIntegration.Controllers.AccountController;
 
 namespace MorningIntegration.Controllers
 {
@@ -23,13 +24,16 @@ namespace MorningIntegration.Controllers
         //    return Ok(result);
         //}
 
+
+
+
         [HttpPost("create-client")]
         public async Task<IActionResult> CreateClient([FromBody] Client client)
         {
             try
             {
                 var createdClient = await _clientService.CreateClientAsync(client);
-                return CreatedAtAction(nameof(CreateClient), new { id = createdClient.Id }, createdClient);
+                return Ok();
             }
             catch (HttpRequestException ex)
             {

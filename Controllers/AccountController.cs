@@ -13,6 +13,7 @@ using MorningIntegration.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using Azure.Core;
 
 
 namespace MorningIntegration.Controllers
@@ -38,12 +39,15 @@ namespace MorningIntegration.Controllers
 
         //    return Ok(token);
         //}
+
+
+
         [HttpPost("getToken")]
-        public async Task<IActionResult> GetToken()
+        public async Task<IActionResult> GetToken([FromBody] TokenRequest request)
         {
             try
             {
-                var token = await _accountService.GetToken();
+                var token = await _accountService.GetToken(request.Id, request.Secret);
 
                 return Ok(new { Token = token });
             }
@@ -52,7 +56,9 @@ namespace MorningIntegration.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
- 
+
+
+
 
     }
 }
