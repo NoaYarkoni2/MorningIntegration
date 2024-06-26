@@ -28,6 +28,7 @@ namespace MorningIntegration.Services
         private readonly ILogger<AccountService> _logger;
 
 
+
         public AccountService(UserManager<IdentityUser> userManager, IConfiguration config, DataContext context, IHttpClientFactory httpClientFactory, ILogger<AccountService> logger)
         {
             _userManager = userManager;
@@ -51,8 +52,7 @@ namespace MorningIntegration.Services
             _logger.LogInformation("Sending request to Green Invoice API.");    
             try
             {
-                var response = await client.PostAsync("https://sandbox.d.greeninvoice.co.il/api/v1/account/token", content);
-
+                var response = await client.PostAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/account/token", content);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();

@@ -29,16 +29,13 @@ namespace MorningIntegration.Services
         {
             var token = await _accountService.GetToken("044577f7-6513-44ff-9537-7df4d77310c2", "eO5q9QcbDwOij73XN2z-3w");
             client.id = Guid.NewGuid().ToString();
-
-
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
             {
-                //var apiUrl = _config.GetValue<string>("ApiSettings:ClientEndpoint");
                 var json = JsonSerializer.Serialize(client);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 _logger.LogInformation("Sending POST request to create a new client.");
-                var response = await httpClient.PostAsync("https://sandbox.d.greeninvoice.co.il/api/v1/clients", content);
+                var response = await httpClient.PostAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/clients", content);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
@@ -49,6 +46,29 @@ namespace MorningIntegration.Services
                 _logger.LogInformation("Received response from creating client.");
                 return JsonSerializer.Deserialize<Client>(result);
             }
+        }
+
+        public async Task<Client> UpdateClientAsync(string id, Client updatedClient)
+        {
+            var token = await _accountService.GetToken("044577f7-6513-44ff-9537-7df4d77310c2", "eO5q9QcbDwOij73XN2z-3w");
+            using (HttpClient httpClient = _httpClientFactory.CreateClient())
+            {
+                var json = JsonSerializer.Serialize(updatedClient);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                _logger.LogInformation("Sending POST request to create a new client.");
+                var response = await httpClient.PutAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/clients/{id}", content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Request to create client failed with status code {StatusCode}. Response: {Response}", response.StatusCode, errorContent);
+                    throw new HttpRequestException($"Request to create client failed with status code {response.StatusCode}. Response: {errorContent}");
+                }
+                var result = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation("Received response from updating client.");
+                return JsonSerializer.Deserialize<Client>(result);
+            }
+
         }
     }
 }
