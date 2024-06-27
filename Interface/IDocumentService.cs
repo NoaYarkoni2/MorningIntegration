@@ -1,6 +1,8 @@
-﻿namespace MorningIntegration.Interface
+﻿using MorningIntegration.Models;
+namespace MorningIntegration.Interface
 {
-    public class IDocumentService
+    public interface IDocumentService
     {
+        Task<Document> CreateDocumentAsync(Document document);
     }
 }

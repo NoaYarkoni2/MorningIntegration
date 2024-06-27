@@ -43,26 +43,9 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-//builder.Services.AddHttpClient<ClientService>();
-//builder.Services.AddTransient<IClientService>(sp =>
-//{
-//    var httpClient = sp.GetRequiredService<HttpClient>();
-//    var apiKey = builder.Configuration["Jwt:ApiKey"];
-//    var apiSecret = builder.Configuration["Jwt:ApiSecret"];
-//    var tokenUrl = builder.Configuration["Jwt:TokenUrl"];
-//    var clientUrl = builder.Configuration["Jwt:ClientUrl"];
-//    return new ClientService(httpClient, apiKey, apiSecret, tokenUrl, clientUrl);
-//});
-// Add Authorization
-//builder.Services.AddAuthorization();
-//builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ClientService>();
 builder.Services.AddHttpClient();
-//builder.Services.AddHttpClient("greeninvoice", c =>
-//{
-//    c.BaseAddress = new Uri(confi"https://api.greeninvoice.co.il/api/v1");
-//});
-//builder.Services.AddHttpClient<IClientService, ClientService>();
+
 builder.Services.AddHttpClient<IAccountService, AccountService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["https://sandbox.d.greeninvoice.co.il/api/v1/"]);
@@ -70,6 +53,8 @@ builder.Services.AddHttpClient<IAccountService, AccountService>(client =>
 
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClientService, ClientService>();
+builder.Services.AddTransient<IDocumentService, DocumentService>();
+
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

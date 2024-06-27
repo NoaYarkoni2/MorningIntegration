@@ -8,8 +8,5 @@ namespace MorningIntegration.Interface
     {
         //Task<String> Login(string email, string password);
         Task<String> GetToken(string id, string secret);
-
-
-
     }
 }

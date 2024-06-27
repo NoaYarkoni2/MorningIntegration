@@ -28,7 +28,7 @@ namespace MorningIntegration.Services
         public async Task<Client> CreateClientAsync(Client client)
         {
             var token = await _accountService.GetToken("044577f7-6513-44ff-9537-7df4d77310c2", "eO5q9QcbDwOij73XN2z-3w");
-            client.id = Guid.NewGuid().ToString();
+            //client.id = Guid.NewGuid().ToString();
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
             {
                 var json = JsonSerializer.Serialize(client);
@@ -44,7 +44,9 @@ namespace MorningIntegration.Services
                 }
                 var result = await response.Content.ReadAsStringAsync();
                 _logger.LogInformation("Received response from creating client.");
-                return JsonSerializer.Deserialize<Client>(result);
+                var newClient= JsonSerializer.Deserialize<Client>(result);
+                client.id = newClient.id;
+                return newClient;
             }
         }
 

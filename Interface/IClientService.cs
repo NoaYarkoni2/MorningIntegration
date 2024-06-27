@@ -6,7 +6,5 @@ namespace MorningIntegration.Interface
     {
         Task<Client> CreateClientAsync(Client client);
         Task<Client> UpdateClientAsync(string id, Client updatedClient);
-
-
     }
 }
