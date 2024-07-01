@@ -21,9 +21,9 @@ namespace MorningIntegration.Services
             _accountService = accountService;
         }
 
-        public async Task<Document> CreateDocumentAsync(Document document)
+        public async Task<Document> CreateDocumentAsync(Document document, string id, string secret)
         {
-            var token = await _accountService.GetToken("044577f7-6513-44ff-9537-7df4d77310c2", "eO5q9QcbDwOij73XN2z-3w");
+            var token = await _accountService.GetToken(id, secret);
          
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
             {
@@ -55,6 +55,27 @@ namespace MorningIntegration.Services
                 }
             }
 
+        }
+
+        public async Task<Document> GetDocumentAsync(string DocumentId, string id, string secret)
+        {
+            var token = await _accountService.GetToken(id, secret);
+            using (HttpClient httpClient = _httpClientFactory.CreateClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                _logger.LogInformation("Sending Get request to retrieve a document with ID.");
+                var response = await httpClient.GetAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/documents/{DocumentId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Request to Get Document failed with status code {StatusCode}. Response: {Response}", response.StatusCode, errorContent);
+                    throw new HttpRequestException($"Request to Get Document failed with status code {response.StatusCode}. Response: {errorContent}");
+                }
+                var result = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation("Received response from Get Document.");
+                return JsonSerializer.Deserialize<Document>(result);
+            }
         }
     }
 }

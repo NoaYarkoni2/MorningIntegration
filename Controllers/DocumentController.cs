@@ -18,16 +18,30 @@ namespace MorningIntegration.Controllers
         }
 
         [HttpPost("create-document")]
-        public async Task<IActionResult> CreateDocument([FromBody] Document document)
+        public async Task<IActionResult> CreateDocument([FromBody] Document document, string id, string secret)
         {
             try
             {
-                var createdDocument = await _documentService.CreateDocumentAsync(document);
+                var createdDocument = await _documentService.CreateDocumentAsync(document,id,secret);
                 return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("get-document/{documentId}")]
+        public async Task<IActionResult> UpdateDocument(string documentId, string id, string secret)
+        {
+            try
+            {
+                var document = await _documentService.GetDocumentAsync(documentId,id, secret);
+                return Ok(document);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }

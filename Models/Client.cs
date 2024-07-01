@@ -23,8 +23,8 @@
         public string mobile { get; set; }
         public string? remarks { get; set; }
         public string? contactPerson { get; set; }
-        public object[] emails { get; set; }
-        public object[]? labels { get; set; }
+        public string[] emails { get; set; }
+        public string[]? labels { get; set; }
          
       
         //public int creationDate { get; set; }

@@ -4,7 +4,7 @@ namespace MorningIntegration.Interface
 {
     public interface IClientService
     {
-        Task<Client> CreateClientAsync(Client client);
-        Task<Client> UpdateClientAsync(string id, Client updatedClient);
+        Task<Client> CreateClientAsync(Client client, string id, string secret);
+        Task<Client> UpdateClientAsync(string clientId, Client updatedClient, string id, string secret);
     }
 }

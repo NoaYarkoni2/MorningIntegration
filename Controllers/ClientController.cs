@@ -18,11 +18,11 @@ namespace MorningIntegration.Controllers
         }
 
         [HttpPost("create-client")]
-        public async Task<IActionResult> CreateClient([FromBody] Client client)
+        public async Task<IActionResult> CreateClient(string id, string secret,[FromBody] Client client)
         {
             try
             {
-                var createdClient = await _clientService.CreateClientAsync(client);
+                var createdClient = await _clientService.CreateClientAsync(client, id, secret);
                 return Ok();
             }
             catch (HttpRequestException ex)
@@ -31,17 +31,17 @@ namespace MorningIntegration.Controllers
             }
         }
 
-        [HttpPut("update-client/{id}")]
-        public async Task<IActionResult> UpdateClient(string id, [FromBody] Client updatedClient)
+        [HttpPut("update-client/{clientId}")]
+        public async Task<IActionResult> UpdateClient(string clientId, string id, string secret,[FromBody] Client updatedClient)
         {
-            if (string.IsNullOrEmpty(id) || updatedClient == null)
+            if (string.IsNullOrEmpty(clientId) || updatedClient == null)
             {
                 return BadRequest("Invalid client ID or client data.");
             }
 
             try
             {
-                var updatedClientResponse = await _clientService.UpdateClientAsync(id, updatedClient);
+                var updatedClientResponse = await _clientService.UpdateClientAsync(clientId, updatedClient, id, secret);
                 return Ok(updatedClientResponse);
             }
             catch (HttpRequestException ex)

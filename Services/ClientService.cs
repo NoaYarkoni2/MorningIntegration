@@ -25,9 +25,9 @@ namespace MorningIntegration.Services
             _accountService = accountService;
         }
 
-        public async Task<Client> CreateClientAsync(Client client)
+        public async Task<Client> CreateClientAsync(Client client, string id, string secret)
         {
-            var token = await _accountService.GetToken("044577f7-6513-44ff-9537-7df4d77310c2", "eO5q9QcbDwOij73XN2z-3w");
+            var token = await _accountService.GetToken(id, secret);
             //client.id = Guid.NewGuid().ToString();
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
             {
@@ -50,16 +50,16 @@ namespace MorningIntegration.Services
             }
         }
 
-        public async Task<Client> UpdateClientAsync(string id, Client updatedClient)
+        public async Task<Client> UpdateClientAsync(string clientId, Client updatedClient, string id, string secret)
         {
-            var token = await _accountService.GetToken("044577f7-6513-44ff-9537-7df4d77310c2", "eO5q9QcbDwOij73XN2z-3w");
+            var token = await _accountService.GetToken(id, secret);
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
             {
                 var json = JsonSerializer.Serialize(updatedClient);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 _logger.LogInformation("Sending POST request to create a new client.");
-                var response = await httpClient.PutAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/clients/{id}", content);
+                var response = await httpClient.PutAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/clients/{clientId}", content);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
