@@ -23,8 +23,7 @@ namespace MorningIntegration.Services
 
         public async Task<Document> CreateDocumentAsync(Document document, string id, string secret)
         {
-            var token = await _accountService.GetToken(id, secret);
-         
+            var token = await _accountService.GetToken(id, secret);         
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
             {
                 var json = JsonSerializer.Serialize(document);
@@ -38,10 +37,8 @@ namespace MorningIntegration.Services
                     _logger.LogError("Request to create document failed with status code {StatusCode}. Response: {Response}", response.StatusCode, errorContent);
                     throw new HttpRequestException($"Request to create document failed with status code {response.StatusCode}. Response: {errorContent}");
                 }
-
                 var result = await response.Content.ReadAsStringAsync();
                 _logger.LogDebug("Received JSON Response from API: {Result}", result);
-
                 try
                 {
                     var createdDocument = JsonSerializer.Deserialize<Document>(result);
@@ -54,10 +51,9 @@ namespace MorningIntegration.Services
                     throw;
                 }
             }
-
         }
 
-        public async Task<Document> GetDocumentAsync(string DocumentId, string id, string secret)
+        public async Task<Document> GetDocumentAsync(string documentId, string id, string secret)
         {
             var token = await _accountService.GetToken(id, secret);
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
@@ -65,7 +61,7 @@ namespace MorningIntegration.Services
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 _logger.LogInformation("Sending Get request to retrieve a document with ID.");
-                var response = await httpClient.GetAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/documents/{DocumentId}");
+                var response = await httpClient.GetAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/documents/{documentId}");
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
@@ -75,6 +71,37 @@ namespace MorningIntegration.Services
                 var result = await response.Content.ReadAsStringAsync();
                 _logger.LogInformation("Received response from Get Document.");
                 return JsonSerializer.Deserialize<Document>(result);
+            }
+        }
+
+        public async Task<Document> CloseDocumentAsync(string documentId, string id, string secret)
+        {
+            var token = await _accountService.GetToken(id, secret);
+            using (HttpClient httpClient = _httpClientFactory.CreateClient())
+            {
+                var content = new StringContent("", Encoding.UTF8, "application/json");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                _logger.LogInformation("Sending POST request to close a document.");
+                var response = await httpClient.PostAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/documents/{documentId}/close", content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Request to close document failed with status code {StatusCode}. Response: {Response}", response.StatusCode, errorContent);
+                    throw new HttpRequestException($"Request to close document failed with status code {response.StatusCode}. Response: {errorContent}");
+                }
+                var result = await response.Content.ReadAsStringAsync();
+                _logger.LogDebug("Received JSON Response from API: {Result}", result);
+                try
+                {
+                    var responseData = JsonSerializer.Deserialize<Document>(result);
+                    _logger.LogDebug("Deserialized Document: {@Document}", responseData);
+                    return responseData;
+                }
+                catch (JsonException ex)
+                {
+                    _logger.LogError(ex, "Error deserializing JSON response to Document object.");
+                    throw;
+                }
             }
         }
     }

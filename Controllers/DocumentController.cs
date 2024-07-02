@@ -44,5 +44,19 @@ namespace MorningIntegration.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+
+        [HttpPost("close-document")]
+        public async Task<IActionResult> CloseDocument(string documentId, string id, string secret)
+        {
+            try
+            {
+                var closeDocument = await _documentService.CloseDocumentAsync(documentId, id, secret);
+                return Ok(closeDocument);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

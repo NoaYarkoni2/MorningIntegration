@@ -54,6 +54,10 @@ builder.Services.AddHttpClient<IAccountService, AccountService>(client =>
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClientService, ClientService>();
 builder.Services.AddTransient<IDocumentService, DocumentService>();
+builder.Services.AddTransient<ITransactionInvoiceService, TransactionInvoiceService>();
+builder.Services.AddTransient<ITaxInvoiceReceiptService, TaxInvoiceReceiptService>();
+builder.Services.AddTransient<ICreditInvoiceService, CreditInvoiceService>();
+
 
 // Add services to the container.
 builder.Services.AddControllers();
