@@ -4,6 +4,7 @@ using MorningIntegration.Services;
 using MorningIntegration.Models;
 using MorningIntegration.Interface;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace MorningIntegration.Controllers
 {
@@ -54,6 +55,34 @@ namespace MorningIntegration.Controllers
             {
                 var closeDocument = await _documentService.CloseDocumentAsync(documentId, id, secret);
                 return Ok(closeDocument);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("get-a-preview-document")]
+        public async Task<IActionResult> GetPreviewDocument(string documentId, string id, string secret)
+        {
+            try
+            {
+                var getPreviewDocument = await _documentService.GetPreviewDocumentAsync(documentId, id, secret);
+                return Ok(getPreviewDocument);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("search-documents")]
+        public async Task<IActionResult> SearchDocuments([FromBody] DocumentSearchRequest searchRequest, string id, string secret)
+        {
+            try
+            {
+                var searchResponse = await _documentService.SearchDocumentsAsync(searchRequest, id, secret);
+                return Ok(searchResponse);
             }
             catch (Exception ex)
             {

@@ -3,6 +3,8 @@ using MorningIntegration.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
+//using System.Reflection.Metadata;
+
 
 namespace MorningIntegration.Services
 {
@@ -104,5 +106,73 @@ namespace MorningIntegration.Services
                 }
             }
         }
+
+
+        public async Task<GetPreviewResponse> GetPreviewDocumentAsync(string documentId, string id, string secret)
+        {
+            var token = await _accountService.GetToken(id, secret);
+            using (HttpClient httpClient = _httpClientFactory.CreateClient())
+            {
+                var document = await GetDocumentAsync(documentId, id, secret);
+                var json = JsonSerializer.Serialize(document);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                _logger.LogInformation("Sending POST request to get a preview document.");
+                var response = await httpClient.PostAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/documents/preview", content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Request to get a preview document failed with status code {StatusCode}. Response: {Response}", response.StatusCode, errorContent);
+                    throw new HttpRequestException($"Request to get a preview document failed with status code {response.StatusCode}. Response: {errorContent}");
+                }
+                var result = await response.Content.ReadAsStringAsync();
+                _logger.LogDebug("Received JSON Response from API: {Result}", result);
+                try
+                {
+                    var responseData = new GetPreviewResponse { File = result };
+                    _logger.LogDebug("Deserialized Document: {@File}", responseData.File);
+                    return responseData;
+                }
+                catch (JsonException ex)
+                {
+                    _logger.LogError(ex, "Error deserializing JSON response to Document object.");
+                    throw;
+                }
+            }
+        }
+
+        public async Task<DocumentSearchResponse> SearchDocumentsAsync(DocumentSearchRequest searchRequest, string id, string secret)
+        {
+            var token = await _accountService.GetToken(id, secret);
+            using (HttpClient httpClient = _httpClientFactory.CreateClient())
+            {
+                var json = JsonSerializer.Serialize(searchRequest);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                _logger.LogInformation("Sending POST request to search for documents.");
+                var response = await httpClient.PostAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/documents/search", content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Request to search for documents failed with status code {StatusCode}. Response: {Response}", response.StatusCode, errorContent);
+                    throw new HttpRequestException($"Request to search for documents failed with status code {response.StatusCode}. Response: {errorContent}");
+                }
+                var result = await response.Content.ReadAsStringAsync();
+                _logger.LogDebug("Received JSON Response from API: {Result}", result);
+                try
+                {
+                    var responseData = JsonSerializer.Deserialize<DocumentSearchResponse>(result);
+                    _logger.LogDebug("Deserialized Document: {@DocumentSearchResponse}", responseData);
+                    _logger.LogInformation("Received DocumentSearchResponse: {@DocumentSearchResponse}", responseData);
+                    return responseData;
+                }
+                catch (JsonException ex)
+                {
+                    _logger.LogError(ex, "Error deserializing JSON response to DocumentSearchResponse object.");
+                    throw;
+                }
+            }
+        }
+
     }
 }
