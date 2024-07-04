@@ -7,9 +7,8 @@ namespace MorningIntegration.Data
 {
     public class DataContext : IdentityDbContext
     {
-        public DataContext (DbContextOptions<DataContext> options) : base(options) {
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
         }
-
-
     }
 }

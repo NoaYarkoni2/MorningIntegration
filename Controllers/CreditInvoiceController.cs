@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MorningIntegration.Interface;
 using MorningIntegration.Models;
-using MorningIntegration.Services;
 
 namespace MorningIntegration.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CreditInvoiceController : ControllerBase
     {
         private readonly ICreditInvoiceService _creditInvoiceService;

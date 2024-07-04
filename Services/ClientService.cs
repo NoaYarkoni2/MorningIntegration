@@ -1,12 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MorningIntegration.Interface;
+﻿using MorningIntegration.Interface;
 using MorningIntegration.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Data;
-using MorningIntegration.Data;
 
 namespace MorningIntegration.Services
 {
@@ -27,8 +24,7 @@ namespace MorningIntegration.Services
 
         public async Task<Client> CreateClientAsync(Client client, string id, string secret)
         {
-            var token = await _accountService.GetToken(id, secret);
-            //client.id = Guid.NewGuid().ToString();
+            var token = await _accountService.GetToken(id, secret);        
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
             {
                 var json = JsonSerializer.Serialize(client);

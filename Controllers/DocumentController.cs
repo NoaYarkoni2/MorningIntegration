@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using MorningIntegration.Services;
 using MorningIntegration.Models;
 using MorningIntegration.Interface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MorningIntegration.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;

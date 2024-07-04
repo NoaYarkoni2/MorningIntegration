@@ -22,7 +22,7 @@ namespace MorningIntegration.Services
         {
             var document = new Document
             {
-                type = 300,
+                type = 320,
                 date = taxInvoiceReceipt.date,
                 lang = taxInvoiceReceipt.lang,
                 currency = taxInvoiceReceipt.currency,

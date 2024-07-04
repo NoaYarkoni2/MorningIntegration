@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MorningIntegration.Interface;
 using MorningIntegration.Models;
 using MorningIntegration.Services;
-using static MorningIntegration.Controllers.AccountController;
 
 namespace MorningIntegration.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ClientController : ControllerBase
     {
         private readonly IClientService _clientService;

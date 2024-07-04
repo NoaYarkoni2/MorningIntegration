@@ -6,7 +6,6 @@ namespace MorningIntegration.Interface
 {
     public interface IAccountService
     {
-        //Task<String> Login(string email, string password);
         Task<String> GetToken(string id, string secret);
     }
 }

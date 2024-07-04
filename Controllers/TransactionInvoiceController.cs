@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using MorningIntegration.Services;
 using MorningIntegration.Interface;
 using MorningIntegration.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MorningIntegration.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TransactionInvoiceController : ControllerBase
     {
         private readonly ITransactionInvoiceService _transactionInvoiceService;
