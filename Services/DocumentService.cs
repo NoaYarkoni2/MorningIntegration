@@ -3,6 +3,8 @@ using MorningIntegration.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 //using System.Reflection.Metadata;
 
 
@@ -25,7 +27,7 @@ namespace MorningIntegration.Services
 
         public async Task<Document> CreateDocumentAsync(Document document, string id, string secret)
         {
-            var token = await _accountService.GetToken(id, secret);         
+            var token = await _accountService.GetToken(id, secret);
             using (HttpClient httpClient = _httpClientFactory.CreateClient())
             {
                 var json = JsonSerializer.Serialize(document);
@@ -140,6 +142,34 @@ namespace MorningIntegration.Services
                 }
             }
         }
+
+        //public async Task<string> GetPreviewDocumentAsync(string documentId, string id, string secret)
+        //{
+        //    var token = await _accountService.GetToken(id, secret);
+        //    using (HttpClient httpClient = _httpClientFactory.CreateClient())
+        //    {
+        //        var document = await GetDocumentAsync(documentId, id, secret);
+        //        var json = JsonSerializer.Serialize(document);
+        //        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        //        _logger.LogInformation("Sending POST request to get a preview document.");
+
+        //        var response = await httpClient.PostAsync($"{_config.GetValue<string>("ApiSettings:BaseUrl")}/documents/preview", content);
+
+        //        if (!response.IsSuccessStatusCode)
+        //        {
+        //            var errorContent = await response.Content.ReadAsStringAsync();
+        //            _logger.LogError("Request to get a preview document failed with status code {StatusCode}. Response: {Response}", response.StatusCode, errorContent);
+        //            throw new HttpRequestException($"Request to get a preview document failed with status code {response.StatusCode}. Response: {errorContent}");
+        //        }
+
+        //        var result = await response.Content.ReadAsStringAsync();
+        //        _logger.LogDebug("Received JSON Response from API: {Result}", result);
+
+        //        return result;
+        //    }
+        //}
+
 
         public async Task<DocumentSearchResponse> SearchDocumentsAsync(DocumentSearchRequest searchRequest, string id, string secret)
         {

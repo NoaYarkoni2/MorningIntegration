@@ -1,4 +1,5 @@
-﻿using MorningIntegration.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using MorningIntegration.Models;
 namespace MorningIntegration.Interface
 {
     public interface IDocumentService

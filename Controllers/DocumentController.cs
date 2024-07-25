@@ -25,7 +25,7 @@ namespace MorningIntegration.Controllers
         {
             try
             {
-                var createdDocument = await _documentService.CreateDocumentAsync(document,id,secret);
+                var createdDocument = await _documentService.CreateDocumentAsync(document, id, secret);
                 return Ok();
             }
             catch (Exception ex)
@@ -39,7 +39,7 @@ namespace MorningIntegration.Controllers
         {
             try
             {
-                var document = await _documentService.GetDocumentAsync(documentId,id, secret);
+                var document = await _documentService.GetDocumentAsync(documentId, id, secret);
                 return Ok(document);
             }
             catch (HttpRequestException ex)
@@ -75,6 +75,7 @@ namespace MorningIntegration.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
         [HttpPost("search-documents")]
         public async Task<IActionResult> SearchDocuments([FromBody] DocumentSearchRequest searchRequest, string id, string secret)
